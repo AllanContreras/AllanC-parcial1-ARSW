@@ -141,5 +141,9 @@ public void run() {
 }
 ```
 -  <img width="1044" height="203" alt="image" src="https://github.com/user-attachments/assets/d7d2bd2a-125a-47ad-be0c-e2b0bb24b208" />
-
-
+```text
+El programa calcula los dígitos hexadecimales de Pi usando dos métodos:
+Secuencial: calcula los dígitos uno tras otro.
+Paralelo: divide el cálculo entre varios hilos que trabajan al mismo tiempo.
+La salida muestra los dígitos obtenidos en cada método para comparar y confirmar que ambos dan el mismo resultado correcto.
+```
