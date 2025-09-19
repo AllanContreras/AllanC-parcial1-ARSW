@@ -101,3 +101,42 @@ public static byte[] getDigits(int start, int count, int numThreads) {
 ```
  
 3. Ajuste la implementación para que cada 5 segundos los hilos se detengan e impriman el número de digitos que han procesado y una vez se presione la tecla enter que los hilos continúen su proceso.
+```text
+Dentro del método run() de PiDigitThread, cada vez que el hilo ha procesado 100 dígitos (o lo que decidas),
+ se imprime el progreso y se espera a que el usuario presione Enter para continuar. Se sincroniza el acceso con synchronized
+ para evitar conflictos entre hilos.
+```
+```python
+private static final Object LOCK = new Object();
+
+@Override
+public void run() {
+    double sum = 0;
+    int digitsProcessed = 0;
+
+    for (int i = 0; i < count; i++) {
+        if (i % PiDigits.DigitsPerSum == 0) {
+            sum = 4 * PiDigits.sum(1, start)
+                    - 2 * PiDigits.sum(4, start)
+                    - PiDigits.sum(5, start)
+                    - PiDigits.sum(6, start);
+            start += PiDigits.DigitsPerSum;
+        }
+
+        sum = 16 * (sum - Math.floor(sum));
+        digits[i] = (byte) sum;
+        digitsProcessed++;
+
+        if (digitsProcessed % 100 == 0) {
+            synchronized (LOCK) {
+                try {
+                    System.out.println("Thread " + threadId + " processed " + digitsProcessed + " digits. Press Enter to continue.");
+                    System.in.read();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+```
