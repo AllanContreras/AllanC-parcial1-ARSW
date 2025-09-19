@@ -61,6 +61,43 @@ public class PiDigitThread extends Thread {
 
 
 2. Haga que la función PiDigits.getDigits() reciba como parámetro adicional un valor N, correspondiente al número de hilos entre los que se va a paralelizar la solución. Haga que dicha función espere hasta que los N hilos terminen de resolver el problema para combinar las respuestas y entonces retornar el resultado. Para esto, puede utilizar el método Join() del API de concurrencia de Java.
+```text
+Se modificó PiDigits.getDigits(int start, int count, int numThreads)
+para dividir el cálculo entre N hilos (PiDigitThread), iniciar cada hilo, y luego hacer join() a
+todos los hilos para esperar a que terminen y así combinar sus resultados.
+```
+```python
+public static byte[] getDigits(int start, int count, int numThreads) {
+    byte[] digits = new byte[count];
+    int digitsPerThread = count / numThreads;
 
+    PiDigitThread[] threads = new PiDigitThread[numThreads];
+    int currentStart = start;
+
+    for (int i = 0; i < numThreads; i++) {
+        int threadCount = (i == numThreads - 1) ? (count - i * digitsPerThread) : digitsPerThread;
+        threads[i] = new PiDigitThread(currentStart, threadCount, i);
+        threads[i].start();
+        currentStart += threadCount;
+    }
+
+    try {
+        for (int i = 0; i < numThreads; i++) {
+            threads[i].join();
+        }
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+
+    int currentIndex = 0;
+    for (PiDigitThread thread : threads) {
+        byte[] threadDigits = thread.getDigits();
+        System.arraycopy(threadDigits, 0, digits, currentIndex, threadDigits.length);
+        currentIndex += threadDigits.length;
+    }
+
+    return digits;
+}
+```
  
 3. Ajuste la implementación para que cada 5 segundos los hilos se detengan e impriman el número de digitos que han procesado y una vez se presione la tecla enter que los hilos continúen su proceso.
